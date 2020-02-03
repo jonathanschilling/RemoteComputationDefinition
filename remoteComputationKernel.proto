@@ -5,58 +5,152 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "de.labathome";
 option java_outer_classname = "RCK";
-//option objc_class_prefix = "RTG";
 
 package rck;
 
 // Execute some code on a remove computer and keep possibility to interact on the fly.
 service RemoteComputationKernel {
 
+	// reset the server to a known state, i.e. free all variables
 	rpc Reset(ResetRequest) returns (ResetResult) {}
 
-	rpc SendVariable(SendVariableRequest) returns (SendVariableResult) {}
+	// allocate a variable
+	rpc AlocVar(AlocVarRequest) returns (AlocVarResult) {}
+	
+	// free a variable
+	rpc FreeVar(FreeVarRequest) returns (FreeVarResult) {}
 
-	rpc GetVariable(GetVariableRequest) returns (GetVariableResult) {}
+	// send data and save it in an already-allocated int variable
+	rpc SendInt(SendIntRequest) returns (SendIntResult) {}
+	
+	// send data and save it in an already-allocated float variable
+	rpc SendFlt(SendFltRequest) returns (SendFltResult) {}
+	
+	// send data and save it in an already-allocated double variable
+	rpc SendDbl(SendDblRequest) returns (SendDblResult) {}
+	
+	// receive data from an already-allocated int variable
+	rpc RecvInt(RecvIntRequest) returns (RecvIntResult) {}
+	
+	// receive data from an already-allocated float variable
+	rpc RecvFlt(RecvFltRequest) returns (RecvFltResult) {}
+	
+	// receive data from an already-allocated double variable
+	rpc RecvDbl(RecvDblRequest) returns (RecvDblResult) {}
 
-	rpc Execute(ExecuteRequest) returns (ExecuteResult) {}
 
 }
 
+// request to reset the server to a known state, i.e. free all variables
 message ResetRequest {
 }
 
+// response to reset request
 message ResetResult {
-	int32 status = 1;
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
 }
 
-message SendVariableRequest {
-	string variableName = 1;
+
+// request to allocate a variable (will be initialized to 0) and return its id
+message AlocVarRequest {
+	int32 dtype = 1; // 1: byte, 2: short, 3: int, 4: long, 5: float, 6:double
 	repeated int32 dimensions = 2;
-	repeated double data = 3;
 }
 
-// response from server about request to setup a new run
-message SendVariableResult {
-	int32 status = 1;
+// response from allocation of a variable: its id
+message AlocVarResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+	int32 id = 2; // id of the just registered variable; will be <0 if an error occured
 }
 
-message GetVariableRequest {
-	string variableName = 1;
+
+// request to release the memory associated with a given variable
+message FreeVarRequest {
+	int32 id = 1; // id of the variable to free
 }
 
-message GetVariableResult {
-	int32 status = 1;
-	repeated int32 dimensions = 2;
-	repeated double data = 3;
+// result of freeing a variable identified by the given id
+message FreeVarResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
 }
 
-message ExecuteRequest {
-	string command = 1;
+
+
+// request which sends the contents of an int variable to the server
+message SendIntRequest {
+	int32 id = 1; // id of the target variable
+	repeated int32 data = 2; // data to put there
 }
 
-message ExecuteResult {
-	int32 status = 1;
+// response to request to send an int variable
+message SendIntResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
 }
+
+
+// request which sends the contents of a float variable to the server
+message SendFltRequest {
+	int32 id = 1; // id of the target variable
+	repeated float data = 2; // data to put there
+}
+
+// response to request to send a float variable
+message SendFltResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+}
+
+
+// request which sends the contents of a double variable to the server
+message SendDblRequest {
+	int32 id = 1; // id of the target variable
+	repeated double data = 2; // data to put there
+}
+
+// response to request to send a double variable
+message SendDblResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+}
+
+
+
+
+
+// request which receives the contents of an int variable from the server
+message RecvIntRequest {
+	int32 id = 1; // id of the source variable
+}
+
+// response to request to receive an int variable
+message RecvIntResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+	repeated int32 data = 2; // data from server
+}
+
+
+// request which receives the contents of a float variable from the server
+message RecvFltRequest {
+	int32 id = 1; // id of the source variable
+}
+
+// response to request to receive a float variable
+message RecvFltResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+	repeated float data = 2; // data from server
+}
+
+
+// request which receives the contents of a double variable from the server
+message RecvDblRequest {
+	int32 id = 1; // id of the source variable
+	
+}
+
+// response to request to receive a double variable
+message RecvDblResult {
+	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
+	repeated double data = 2; // data from server
+}
+
 
 
 
