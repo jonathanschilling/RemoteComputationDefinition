@@ -123,7 +123,8 @@ message RecvIntRequest {
 // response to request to receive an int variable
 message RecvIntResult {
 	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
-	repeated int32 data = 2; // data from server
+	repeated int32 dimensions = 2; // dimensions of the data
+	repeated int32 data = 3; // data from server
 }
 
 
@@ -135,7 +136,8 @@ message RecvFltRequest {
 // response to request to receive a float variable
 message RecvFltResult {
 	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
-	repeated float data = 2; // data from server
+	repeated int32 dimensions = 2; // dimensions of the data
+	repeated float data = 3; // data from server
 }
 
 
@@ -148,7 +150,8 @@ message RecvDblRequest {
 // response to request to receive a double variable
 message RecvDblResult {
 	int32 error = 1; // error code of the operation; 0 if successful, failure otherwise
-	repeated double data = 2; // data from server
+	repeated int32 dimensions = 2; // dimensions of the data
+	repeated double data = 3; // data from server
 }
 
 
